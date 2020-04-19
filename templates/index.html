@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    {% if uname %}
+        <h2 class="h2">{{ uname }}'s Shopping List</h2>
+    {% else %}
+        <h2 class="h2">Shopping List</h2>
+    {% endif %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="text-danger">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+
+ <form action="{{ url_for('index') }}" method="POST">
+    <div class="form-row">
+        <div class="col-sm-2 my-1">
+            <label for="newItem" class="sr-only">New Item:</label>
+            <input type="text" class="form-control" name="name" id="newItem" placeholder="Enter new item">
+        </div>
+        <div class="col-sm-2 my-1">
+            <label for="quantity" class="sr-only">Quantity:</label>
+            <input type="text" class="form-control" name="quantity" id="quantity" placeholder="Enter quantity">
+        </div>
+        <div class="col-sm-2 my-1">
+            <button type="submit" class="btn btn-primary btn-block">Add</button>
+        </div>
+    </div>
+  </form>
+
+  {% if items|length < 1 %}
+    <p>There is nothing to buy for now.</p>
+  {% else %}
+      <form action="{{ url_for('update_item')}}" method="POST">
+        <table class="table-condensed table-responsive">
+            <thead>
+                <tr>
+                    <th>Items To Buy</th>
+                    <th>Quantity</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.item }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>
+                            <label class="checkbox" style="padding-left: 25px">
+                                <input type="checkbox"  name ="bought" value="{{ item.id }}">
+                            </label>
+                        </td>
+                        <td class="text-right"><a class="btn btn-danger btn-sm" href="{{url_for('delete_item',item_id=item.id)}}" role="button">Delete</a></td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td> </td>
+                        <td></td>
+                        <td><button type="submit" class="btn btn-primary pull-left">Done</button></td>
+                        <td> </td>
+                    </tr>
+            </tbody>
+        </table>
+      </form>
+  {% endif %}
+        <a class="btn btn-primary" href="{{ url_for('google_auth.logout') }}" role="link">Logout</a>
+
+</div>
+{% endblock content %}
